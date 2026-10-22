@@ -4,6 +4,8 @@ on:
   pull_request:
   push:
     branches: [main]
+  # 生產線用 GITHUB_TOKEN 開的 PR 不會觸發 pull_request 事件，改由 pipeline.yml 手動觸發。
+  workflow_dispatch:
 
 permissions:
   contents: read
