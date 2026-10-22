@@ -11,10 +11,10 @@
 
 ### 1. 單一入口
 
-根目錄提供 `npm verify`，依序執行所有檢查，任一失敗即回傳非零結束碼。Agent 完成任何任務前必須跑過並通過。CI 在每個 PR 上執行同一指令。
+根目錄提供 `npm run verify`，依序執行所有檢查，任一失敗即回傳非零結束碼。Agent 完成任何任務前必須跑過並通過。CI 在每個 PR 上執行同一指令。
 
 ```
-npm verify
+npm run verify
  ├─ verify:static    型別檢查、lint、格式
  ├─ verify:content   內容 schema 與引用完整性
  ├─ verify:unit      各 package 的單元測試
@@ -22,7 +22,7 @@ npm verify
  └─ verify:site      對建置產物做 SEO 與端對端檢查
 ```
 
-各層也能單獨執行（例如 `npm verify:content`），讓 agent 在迭代時只跑相關的那層。
+各層也能單獨執行（例如 `npm run verify:content`），讓 agent 在迭代時只跑相關的那層。
 
 ### 2. 各層內容
 
@@ -55,12 +55,12 @@ LLM 的輸出是不確定的，因此除了 schema 外，生產線在寫檔前�
 - **語言檢查**：正文以中文為主，且不含簡體字（以簡繁對照表偵測）。
 - **結構檢查**：必有原始連結、作者、標題；引述次數與長度符合 ADR-0005。
 
-另設一組**不在 `npm verify` 內**的 `npm eval:pipeline`：以少量真實樣本實際呼叫 LLM，產出報告供站長人工檢視 prompt 品質。因為會花錢、結果不確定，只在調整 prompt 時手動執行。
+另設一組**不在 `npm run verify` 內**的 `npm run eval:pipeline`：以少量真實樣本實際呼叫 LLM，產出報告供站長人工檢視 prompt 品質。因為會花錢、結果不確定，只在調整 prompt 時手動執行。
 
 ### 4. 與 Claude Code 的整合
 
-- `AGENTS.md` 寫明：完成任務的定義是 `npm verify` 通過，且滿足該 intent contract 的驗收條件。
-- 可在 Claude Code 設定 hook，於 agent 結束任務前自動執行 `npm verify`，失敗時把錯誤回饋給 agent 繼續修正。
+- `AGENTS.md` 寫明：完成任務的定義是 `npm run verify` 通過，且滿足該 intent contract 的驗收條件。
+- 可在 Claude Code 設定 hook，於 agent 結束任務前自動執行 `npm run verify`，失敗時把錯誤回饋給 agent 繼續修正。
 
 ## 後果
 

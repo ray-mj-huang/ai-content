@@ -6,7 +6,7 @@
 
 ## 意圖
 
-建立 monorepo 骨架與 `packages/content-schema`，讓「什麼是一份合法的內容檔」有唯一、可執行的定義，並讓 `npm verify` 從第一天就能運作。之後的生產線與網站都建立在這份契約上。
+建立 monorepo 骨架與 `packages/content-schema`，讓「什麼是一份合法的內容檔」有唯一、可執行的定義，並讓 `npm run verify` 從第一天就能運作。之後的生產線與網站都建立在這份契約上。
 
 ## 範圍內
 
@@ -18,7 +18,7 @@
    - 提供 CLI `content-check`：執行 ADR-0009「content」層的所有檢查，輸出人類可讀的錯誤（檔案路徑＋欄位＋原因），有錯誤時結束碼非零。
 3. 根目錄 `package.json` 提供 `verify`、`verify:static`、`verify:content`、`verify:unit`；`verify:build`、`verify:site` 先放空實作並印出「尚未實作」，但結束碼為 0。
 4. `content/` 放入範例資料：2 個人物檔、3 篇文章（至少包含 draft、published、rejected 各一）。
-5. GitHub Actions workflow：每個 PR 執行 `npm verify`。
+5. GitHub Actions workflow：每個 PR 執行 `npm run verify`。
 6. `AGENTS.md`：說明 repo 結構、如何跑驗證、開始任務前必讀 `docs/adr/README.md` 與對應 intent。保持精簡，細節指向 docs。
 
 ## 資料模型
@@ -101,12 +101,12 @@
 
 | # | 條件 | 對應檢查 |
 |---|---|---|
-| 1 | 全新 clone 後 `npm install && npm verify` 通過 | CI workflow |
+| 1 | 全新 clone 後 `npm install && npm run verify` 通過 | CI workflow |
 | 2 | 每一條「檢查規則」都有至少一個會失敗的 fixture，且測試確認錯誤訊息包含檔案路徑與規則名稱 | `verify:unit`（content-schema 測試） |
 | 3 | 範例 `content/` 通過 `content-check` | `verify:content` |
-| 4 | 故意把一篇 published 文章的編者觀點清空，`npm verify` 失敗 | `content-schema` 的整合測試（複製範例到暫存目錄後修改） |
+| 4 | 故意把一篇 published 文章的編者觀點清空，`npm run verify` 失敗 | `content-schema` 的整合測試（複製範例到暫存目錄後修改） |
 | 5 | `Person`、`Post` 型別可被其他 package import | 型別測試或 `verify:static` |
-| 6 | PR 上 CI 會執行 `npm verify` | workflow 檔存在，且在 PR 觸發 |
+| 6 | PR 上 CI 會執行 `npm run verify` | workflow 檔存在，且在 PR 觸發 |
 
 ## 需要停下來問的情況
 
@@ -117,5 +117,5 @@
 ## 交付時要提供
 
 - 驗收條件對照表與對應的檢查名稱。
-- `npm verify` 的輸出摘要。
+- `npm run verify` 的輸出摘要。
 - 後續建議（若有）。
