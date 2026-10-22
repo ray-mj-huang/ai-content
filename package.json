@@ -15,6 +15,8 @@
     "verify:unit": "vitest run",
     "verify:build": "node -e \"console.log('verify:build 尚未實作（intent 003）')\"",
     "verify:site": "node -e \"console.log('verify:site 尚未實作（intent 003）')\"",
+    "pipeline": "node packages/pipeline/src/cli.ts",
+    "eval:pipeline": "node packages/pipeline/src/eval.ts",
     "format": "prettier --write ."
   },
   "devDependencies": {

@@ -1,0 +1,85 @@
+name: pipeline
+
+on:
+  schedule:
+    - cron: '0 22 * * *' # 每日 06:00（臺灣時間）
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 最多處理幾個新項目
+        default: '10'
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write # 觸發 verify workflow
+
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+
+      # 尚未 merge 的生產線 PR 只保留一個：有就接著在它的 branch 上累積新草稿，
+      # 讓去重也能看到還在審稿中的文章。
+      - name: Find open pipeline PR
+        id: open
+        run: |
+          branch=$(gh pr list --state open --json headRefName \
+            --jq '[.[] | select(.headRefName | startswith("content/"))][0].headRefName // ""')
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          if [ -n "$branch" ]; then git switch "$branch"; fi
+
+      - name: Run pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::未設定 ANTHROPIC_API_KEY secret"
+            exit 1
+          fi
+          npm run pipeline -- run --limit "${{ inputs.limit || '10' }}" --report .cache/report.md
+          cat .cache/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open or update PR
+        run: |
+          if [ -z "$(git status --porcelain content/)" ]; then
+            echo "沒有新草稿，不開 PR。"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          branch="${{ steps.open.outputs.branch }}"
+          if [ -z "$branch" ]; then
+            branch="content/$(date -u +%F)"
+            if git ls-remote --exit-code --heads origin "$branch" > /dev/null; then
+              branch="$branch-$GITHUB_RUN_NUMBER"
+            fi
+            git switch -c "$branch"
+          fi
+
+          git add content/
+          git commit -m "content: add pipeline drafts $(date -u +%F)"
+          git push origin "$branch"
+
+          if [ -n "${{ steps.open.outputs.branch }}" ]; then
+            gh pr comment "$branch" --body-file .cache/report.md
+          else
+            gh pr create --base main --head "$branch" \
+              --title "content: 生產線草稿 $(date -u +%F)" --body-file .cache/report.md
+          fi
+          gh workflow run verify.yml --ref "$branch"
