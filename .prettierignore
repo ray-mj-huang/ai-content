@@ -1,0 +1,5 @@
+# ADR 與 intent 由人類維護；content/ 是站長的稿件，格式不交給 Prettier 決定。
+docs/
+content/
+**/fixtures/
+package-lock.json

@@ -1,0 +1,29 @@
+{
+  "name": "ai-content",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "verify": "npm run verify:static && npm run verify:content && npm run verify:unit && npm run verify:build && npm run verify:site",
+    "verify:static": "tsc --noEmit -p tsconfig.json && eslint . && prettier --check .",
+    "verify:content": "node packages/content-schema/src/cli.ts content",
+    "verify:unit": "vitest run",
+    "verify:build": "node -e \"console.log('verify:build 尚未實作（intent 003）')\"",
+    "verify:site": "node -e \"console.log('verify:site 尚未實作（intent 003）')\"",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
+    "eslint": "^10.13.0",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5"
+  }
+}
