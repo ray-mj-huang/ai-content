@@ -41,4 +41,11 @@ describe('countChars', () => {
   it('不計 ASCII 標點與 Markdown 語法', () => {
     expect(countChars('## **粗體** - [連結](#)')).toBe(4);
   });
+
+  it('不計 Markdown 連結與圖片的網址', () => {
+    expect(countChars('[原文](https://simonwillison.net/2025/Mar/11/using-llms-for-code/)')).toBe(
+      2,
+    );
+    expect(countChars('![示意圖](https://example.com/a.png "Figure 1")')).toBe(3);
+  });
 });

@@ -34,11 +34,15 @@ export function hasText(text: string | null): boolean {
   return text.replace(/<!--[\s\S]*?-->/g, '').trim().length > 0;
 }
 
+// Markdown 連結與圖片的目標，例如 `](https://example.com "標題")`。
+const LINK_TARGET_PATTERN = /\]\([^)\s]*(?:\s+"[^"]*")?\)/g;
+
 /**
  * 計算字數：每個非 ASCII、非空白字元（中文字、全形標點）算 1 字，
  * 每個連續的英數字串（英文單字、數字）算 1 字。
- * ASCII 標點與 Markdown 語法符號不計。
+ * ASCII 標點、Markdown 語法符號與連結網址不計。
  */
 export function countChars(text: string): number {
-  return text.match(/[A-Za-z0-9]+(?:['’][A-Za-z]+)*|(?!\s)\P{ASCII}/gu)?.length ?? 0;
+  const visible = text.replace(LINK_TARGET_PATTERN, ']');
+  return visible.match(/[A-Za-z0-9]+(?:['’][A-Za-z]+)*|(?!\s)\P{ASCII}/gu)?.length ?? 0;
 }
