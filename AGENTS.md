@@ -38,3 +38,11 @@ npm run format           # 用 Prettier 自動排版
 ```
 
 完成的定義：`npm run verify` 通過，且 intent 的每一條驗收條件都對應到一個自動化檢查。
+
+## Git 流程
+
+- main 只透過 PR 變更，且永遠通過 `npm run verify`。Agent 只開 PR，不 merge、不直接推 main。
+- Branch：`intent/<編號>-<slug>`、`adr/<編號>-<slug>`、`fix/<slug>`、`chore/<slug>`；生產線自動 PR 用 `content/<YYYY-MM-DD>`。
+- 一個 intent 一個 PR，描述照 `.github/pull_request_template.md` 填（驗收條件對照、verify 摘要、後續建議）。
+- Commit 訊息用 Conventional Commits，scope 為 package 名，例如 `feat(content-schema): …`、`content: …`。
+- 以 squash merge 合併。
