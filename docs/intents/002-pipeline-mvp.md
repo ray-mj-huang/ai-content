@@ -1,6 +1,6 @@
 # 002. 內容生產線 MVP（RSS）
 
-- 狀態：可執行（intent 001 完成後）
+- 狀態：可執行
 - 依賴：001
 - 相關 ADR：0004、0005、0006、0009
 
@@ -23,7 +23,7 @@
    7. **寫檔**：通過者寫入 `content/posts/<YYYY>/<slug>.md`，`status: draft`、`starred: false`，正文末附空的「## 編者觀點」段落。
    8. **報告**：輸出一份執行報告（Markdown），列出新增、跳過、失敗（含原因）的項目。
 3. GitHub Actions workflow：每日排程執行 `pipeline run`；有新檔案時開 PR，PR 描述放入執行報告；沒有新檔案時不開 PR。
-4. `npm eval:pipeline`：對 `packages/pipeline/eval/samples/` 中的少量網址實際呼叫 LLM，輸出報告到 `.cache/eval/`，不寫入 `content/`。
+4. `npm run eval:pipeline`：對 `packages/pipeline/eval/samples/` 中的少量網址實際呼叫 LLM，輸出報告到 `.cache/eval/`，不寫入 `content/`。
 
 ## 範圍外
 
@@ -68,6 +68,6 @@
 ## 交付時要提供
 
 - 驗收條件對照表與對應的檢查名稱。
-- `npm verify` 輸出摘要。
+- `npm run verify` 輸出摘要。
 - 一次 `eval:pipeline` 的報告，供站長檢視 prompt 品質。
 - 後續建議（例如下一個要支援的來源類型）。

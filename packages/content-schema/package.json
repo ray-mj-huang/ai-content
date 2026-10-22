@@ -1,0 +1,20 @@
+{
+  "name": "@ai-content/content-schema",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "content-check": "./src/cli.ts"
+  },
+  "scripts": {
+    "check": "node src/cli.ts ../../content",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "zod": "^4.6.7"
+  }
+}
