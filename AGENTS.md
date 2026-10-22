@@ -16,14 +16,14 @@
 
 ## 結構
 
-| 路徑                         | 內容                                                      |
-| ---------------------------- | --------------------------------------------------------- |
-| `packages/content-schema/`   | 內容資料模型（zod）、`loadContent()`、`content-check` CLI |
-| `packages/pipeline/`         | 內容生產線（intent 002，尚未建立）                        |
-| `apps/web/`                  | 前端網站（intent 003，等 ADR-0007 拍板）                  |
-| `content/people/`            | 人物檔 `<slug>.md`                                        |
-| `content/posts/<YYYY>/`      | 文章 `<slug>.md`                                          |
-| `docs/adr/`、`docs/intents/` | 架構決策與任務規格                                        |
+| 路徑                         | 內容                                                             |
+| ---------------------------- | ---------------------------------------------------------------- |
+| `packages/content-schema/`   | 內容資料模型（zod）、`loadContent()`、`content-check` CLI        |
+| `packages/pipeline/`         | 內容生產線：RSS → Claude 摘要 → 品質檢查 → `content/posts/` 草稿 |
+| `apps/web/`                  | 前端網站（intent 003，等 ADR-0007 拍板）                         |
+| `content/people/`            | 人物檔 `<slug>.md`                                               |
+| `content/posts/<YYYY>/`      | 文章 `<slug>.md`                                                 |
+| `docs/adr/`、`docs/intents/` | 架構決策與任務規格                                               |
 
 `apps/web` 與 `packages/pipeline` 只能共同依賴 `content-schema`，不得互相 import。
 
@@ -38,6 +38,18 @@ npm run format           # 用 Prettier 自動排版
 ```
 
 完成的定義：`npm run verify` 通過，且 intent 的每一條驗收條件都對應到一個自動化檢查。
+
+## 生產線
+
+```sh
+npm run pipeline -- run --dry-run   # 只列出會處理的項目（會讀 feed，不呼叫 LLM、不寫檔）
+npm run pipeline -- run             # 需要 ANTHROPIC_API_KEY；產出 status: draft 的文章
+npm run eval:pipeline               # 以 eval/samples/ 實際呼叫 LLM，報告寫到 .cache/eval/（會花錢）
+```
+
+- 測試不得連網、不得呼叫真實 LLM：用 `test/fixtures/` 的錄製資料與假的 `LlmClient`。
+- prompt 在 `packages/pipeline/prompts/`；修改後執行 `eval:pipeline` 請站長檢視。
+- 生產線不會寫出 `published`，也不會修改既有文章；原文只留在記憶體。
 
 ## Git 流程
 
