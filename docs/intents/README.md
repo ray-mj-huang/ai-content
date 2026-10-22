@@ -4,8 +4,8 @@ Intent contract 描述「這次要做什麼、做到什麼程度算完成」，�
 
 | 編號 | 標題 | 狀態 | 依賴 |
 |---|---|---|---|
-| [001](001-repo-and-content-model.md) | Repo 骨架與內容資料模型 | 可執行 | — |
-| [002](002-pipeline-mvp.md) | 內容生產線 MVP（RSS） | 可執行（001 完成後） | 001 |
+| [001](001-repo-and-content-model.md) | Repo 骨架與內容資料模型 | 完成 | — |
+| [002](002-pipeline-mvp.md) | 內容生產線 MVP（RSS） | 可執行 | 001 |
 | [003](003-web-mvp.md) | 前端網站 MVP | **阻塞**：等 ADR-0007 拍板 | 001 |
 
 ## 狀態定義
